@@ -34,6 +34,25 @@ services:
       - carrental_local_postgres_data_backups:/backups:z
     env_file:
       - ./.envs/.local/.postgres
+  
+  mongo:
+    image: carrental_production_mongo
+    container_name: carrental_local_mongo
+    restart: always
+    env_file:
+      - ./.envs/.local/.mongo
+    environment: 
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=${MONGO_DB_NAME}
+      - MONGO_INITDB_USERNAME=${MONGO_DB_USERNAME}
+      - MONGO_INITDB_PASSWORD=${MONGO_DB_PASSWORD}
+    volumes:
+      - ${PWD}/_data/mongo:/data/db
+      - ${PWD}/docker/_mongo/fixtures:/import
+      - ${PWD}/docker/_mongo/scripts/init.sh:/docker-entrypoint-initdb.d/setup.sh
+    ports:
+      - 27017:27017
 
   docs:
     image: carrental_local_docs
